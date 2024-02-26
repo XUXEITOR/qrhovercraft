@@ -1,64 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-  <title>Componente Naval del Comando Especial VRAEM - 2024 </title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.2/aframe.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+<title>Realidad Aumentada con QR</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.0.0/jsQR.min.js"></script>
+<script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
 </head>
-<body>
-  <a-scene embedded>
+<body hidden>
+<video id="video" width="100%" height="100%" style="transform: scaleX(-1);" autoplay></video>
+<canvas id="canvas" width="100%" height="100%"></canvas>
+<a-scene>
     <a-camera position="0 0 0"></a-camera>
-    <a-entity id="marker" position="0 0 0" visible="false">
-      <a-image src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/QR_code_for_Wikipedia.svg/1200px-QR_code_for_Wikipedia.svg.png" width="1" height="1"></a-image>
+    <a-entity id="video-overlay" visible="false">
+    <a-video src="#video-texture" material="shader: flat; transparent: true"></a-video>
     </a-entity>
-    <a-entity id="model" visible="false">
-      <a-video src="https://www.videezy.com/wp-content/uploads/2017/04/4K-Nature-Relax-Video-Footage.mp4" autoplay="true" loop="true" width="4" height="3"></a-video>
-    </a-entity>
-  </a-scene>
-  <script>
-    const marker = document.querySelector('#marker');
-    const model = document.querySelector('#model');
+</a-scene>
 
-    AFRAME.registerComponent('detect-marker', {
-      init: function () {
-        const sceneEl = this.el.sceneEl;
-        const cameraEl = sceneEl.querySelector('a-camera');
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const scene = document.querySelector('a-scene');
+    const videoOverlay = document.getElementById('video-overlay');
+    const videoTexture = document.createElement('video-texture');
+    let qrFound = false;
 
-        this.markerFound = false;
-
-        sceneEl.addEventListener('markerFound', (event) => {
-          if (event.detail.target === marker) {
-            this.markerFound = true;
-            model.setAttribute('visible', true);
-          }
-        });
-
-        sceneEl.addEventListener('markerLost', (event) => {
-          if (event.detail.target === marker) {
-            this.markerFound = false;
-            model.setAttribute('visible', false);
-          }
-        });
-
-        this.tick = () => {
-          if (this.markerFound) {
-            const position = marker.getAttribute('position');
-            model.setAttribute('position', position);
-            
-            // Sincronizar audio con video
-            const videoEl = model.querySelector('a-video');
-            const audioEl = document.createElement('audio');
-            audioEl.src = videoEl.getAttribute('src');
-            audioEl.play();
-          }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+    .then((stream) => {
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+        video.play();
+        detectQRCode();
         };
+    })
+    .catch((err) => console.error('Error al acceder a la cámara:', err));
 
-        sceneEl.tick(this.tick);
-      }
-    });
+    function detectQRCode() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
 
-    marker.setAttribute('detect-marker', '');
-  </script>
+    if (code) {
+        qrFound = true;
+        videoOverlay.setAttribute('visible', true);
+        videoTexture.setAttribute('src', video.srcObject);
+        videoOverlay.object3D.position.set(code.location.x, code.location.y, 0);
+        videoOverlay.object3D.scale.set(code.location.width, code.location.height, 1);
+    } else {
+        qrFound = false;
+        videoOverlay.setAttribute('visible', false);
+        requestAnimationFrame(detectQRCode);
+    }
+    }
+</script>
 </body>
 </html>
