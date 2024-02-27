@@ -3,19 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Realidad Aumentada con QR</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Realidad Aumentada</title>
+  <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
   <div id="permiso-camara">
-    <img src="ruta_del_logo/logo.png" alt="Logo" id="logo">
-    <h1>Permiso para usar la cámara</h1>
-    <p>Esta aplicación necesita acceder a tu cámara para funcionar correctamente.</p>
-    <button id="btn-permitir">Permitir</button>
-    <video id="video" autoplay style="display: none;"></video>
-    <canvas id="canvas-ar"></canvas>
+    <img id="logo-camara" src="logo.png" alt="Logotipo de cámara">
+    <p>Para disfrutar de la experiencia completa, por favor, permite el acceso a tu cámara.</p>
+    <button id="btn-permiso-camara">Permitir acceso a la cámara</button>
   </div>
-
-  <script src="script.js"></script>
+  <div id="camara">
+    <video id="video-camara" autoplay playsinline></video>
+    <canvas id="canvas-qr" style="display: none;"></canvas>
+  </div>
+  <div id="video-ra">
+    <video id="video-ra-elemento" controls></video>
+  </div>
 </body>
+<script src="script.js"></script>
 </html>
