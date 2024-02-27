@@ -1,108 +1,113 @@
+const btnPermitir = document.getElementById('btn-permitir');
+const video = document.getElementById('video');
+
 btnPermitir.addEventListener('click', () => {
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(stream => {
-      // Se ha obtenido acceso a la cámara
       video.srcObject = stream;
       video.style.display = 'block';
 
-      // Oculta la barra de navegación
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen();
-      } else if (document.documentElement.mozRequestFullScreen) {
-        document.documentElement.mozRequestFullScreen();
-      }
+      // Oculta la interfaz de permisos
+      document.getElementById('permiso-camara').style.display = 'none';
 
       // Inicia la detección de QR
       iniciarDeteccionQR();
     })
     .catch(error => {
-      // Error al obtener acceso a la cámara
       console.error('Error al obtener acceso a la cámara:', error);
+      // Mostrar mensaje al usuario informando sobre el error
     });
 });
 
-// Librerías
-const ZXing = require('@zxing/library');
-const THREE = require('three');
-
-// Elementos del DOM
-const btnPermitir = document.getElementById('btn-permitir');
-const video = document.getElementById('video');
-const canvasAR = document.querySelector('.canvas-ar');
-
 // Variables
-const qrCode = 'https://github.com/XUXEITOR/qrhovercraft.github.io/blob/2f39b6955b0a5d7c451e438f4444815497c7ad58/qr-code.png?raw=true';
-const videoAR = 'https://www.youtube.com/watch?v=dPmPk2tpmSo&t=17s';
+const qrCode = './img/qr.png'; // Ruta del QR
+const videoAR = './video/video.mp4'; // Ruta del video AR
 let scanner;
 let scene, camera, renderer;
 
 // Función para iniciar la detección de QR
 function iniciarDeteccionQR() {
-scanner = new ZXing.BrowserQRCodeReader();
+  scanner = new ZXing.BrowserQRCodeReader();
 
-scanner.decodeFromImage(qrCode)
+  scanner.decodeFromImage(qrCode)
     .then(result => {
       // Se ha detectado el QR
-    console.log('QR detectado:', result.text);
+      console.log('QR detectado:', result.text);
 
       // Iniciar la superposición del video
-    iniciarVideoAR(result.text);
+      iniciarVideoAR(result.text);
     })
     .catch(error => {
-    console.error('Error al detectar el QR:', error);
+      console.error('Error al detectar el QR:', error);
     });
 }
 
-// Función para iniciar la superposición del video
+// Función para iniciar el video de realidad aumentada
 function iniciarVideoAR(qrText) {
-  // Crea la escena de Three.js
-scene = new THREE.Scene();
+  // Crea un elemento `video` para el video AR
+  const videoAR = document.createElement('video');
+  videoAR.src = videoAR;
+  videoAR.autoplay = true;
+  videoAR.muted = true;
+  videoAR.style.position = 'absolute';
+  videoAR.style.top = '0';
+  videoAR.style.left = '0';
+  videoAR.style.width = '100%';
+  videoAR.style.height = '100%';
 
-  // Crea la cámara de Three.js
-camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1100);
-camera.position.z = 500;
+  // Crea un elemento `canvas` para la superposición
+  const canvasAR = document.createElement('canvas');
+  canvasAR.width = window.innerWidth;
+  canvasAR.height = window.innerHeight;
+  canvasAR.style.position = 'absolute';
+  canvasAR.style.top = '0';
+  canvasAR.style.left = '0';
+  canvasAR.style.width = '100%';
+  canvasAR.style.height = '100%';
 
-  // Crea el renderer de Three.js
-renderer = new THREE.WebGLRenderer({
-    canvas: canvasAR,
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
+  // Agrega los elementos al DOM
+  document.getElementById('video').appendChild(videoAR);
+  document.getElementById('canvas-ar').appendChild(canvasAR);
 
-  // Crea la geometría del video
-const videoGeometry = new THREE.PlaneGeometry(640, 480);
+  // Inicializa la escena de Three.js
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  renderer = new THREE.WebGLRenderer({ canvas: canvasAR });
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
-  // Crea el material del video
-const videoMaterial = new THREE.VideoTexture(video);
-videoMaterial.needsUpdate = true;
+  // Crea un objeto 3D para el video
+  const videoTexture = new THREE.VideoTexture(videoAR);
+  videoTexture.minFilter = THREE.LinearFilter;
+  videoTexture.magFilter = THREE.LinearFilter;
 
-  // Crea el objeto del video
-const videoMesh = new THREE.Mesh(videoGeometry, videoMaterial);
-videoMesh.position.z = 100;
+  const material = new THREE.MeshBasicMaterial({ map: videoTexture });
+  const geometry = new THREE.PlaneGeometry(1, 1);
+  const videoMesh = new THREE.Mesh(geometry, material);
 
-  // Añade el video a la escena
-scene.add(videoMesh);
+  // Posiciona el video 3D sobre el QR
+  const qrElement = document.querySelector('#qr-code');
+  const qrRect = qrElement.getBoundingClientRect();
+  videoMesh.position.x = qrRect.left;
+  videoMesh.position.y = qrRect.top;
+  videoMesh.position.z = 0.1;
+
+  // Agrega el video 3D a la escena
+  scene.add(videoMesh);
 
   // Anima la escena
-function animate() {
+  function animate() {
     requestAnimationFrame(animate);
 
     renderer.render(scene, camera);
+  }
+
+  animate();
 }
 
-animate();
-
-  // Inicia la reproducción del video
-video.play();
-
-  // Actualiza el tamaño del lienzo cuando cambia el tamaño de la ventana
-window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-});
-}
-
-// Eventos
-btnPermitir.addEventListener('click', () => {
-navigator.mediaDevices.getUserMedia({ video: true })
-    
+// Inicia la detección de QR al cargar la página
+window.addEventListener('load', iniciarDeteccionQR);
