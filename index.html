@@ -2,58 +2,54 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-<title>Realidad Aumentada con QR</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.0.0/jsQR.min.js"></script>
-<script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMCONAVRAEM</title> 
+<link rel="stylesheet" href="style.css">
 </head>
-<body hidden>
-<video id="video" width="100%" height="100%" style="transform: scaleX(-1);" autoplay></video>
-<canvas id="canvas" width="100%" height="100%"></canvas>
-<a-scene>
-    <a-camera position="0 0 0"></a-camera>
-    <a-entity id="video-overlay" visible="false">
-    <a-video src="#video-texture" material="shader: flat; transparent: true"></a-video>
-    </a-entity>
-</a-scene>
-
-<script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const scene = document.querySelector('a-scene');
-    const videoOverlay = document.getElementById('video-overlay');
-    const videoTexture = document.createElement('video-texture');
-    let qrFound = false;
-
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then((stream) => {
-        video.srcObject = stream;
-        video.onloadedmetadata = () => {
-        video.play();
-        detectQRCode();
-        };
-    })
-    .catch((err) => console.error('Error al acceder a la cámara:', err));
-
-    function detectQRCode() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-    if (code) {
-        qrFound = true;
-        videoOverlay.setAttribute('visible', true);
-        videoTexture.setAttribute('src', video.srcObject);
-        videoOverlay.object3D.position.set(code.location.x, code.location.y, 0);
-        videoOverlay.object3D.scale.set(code.location.width, code.location.height, 1);
-    } else {
-        qrFound = false;
-        videoOverlay.setAttribute('visible', false);
-        requestAnimationFrame(detectQRCode);
+<body><center><u>
+<h1>Presente Hovercraft</h1></u>
+<p>&nbsp;</p>
+<img src="https://github.com/XUXEITOR/qrhovercraft.github.io/blob/main/Sin%20t%C3%ADtulo.png?raw=true" alt="Logo" style="display: block; margin: 0 auto;"width="90" height="100">
+<p>&nbsp;</p>
+<p>Esta aplicación necesita acceder a tu cámara para funcionar correctamente, al termino se borrará el permiso otorgado, gracias.  </p>
+<p>&nbsp;</p> 
+<button id="btn-permitir">Permitir</button>
+<style>
+    #mensaje-permiso {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    width: 80%;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
     }
+
+    h3 {
+    margin-top: 0;
     }
-</script>
+
+    p {
+    margin-bottom: 10px;
+    }
+    #btn-permitir {
+    margin: 10px 5px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    }
+    #btn-permitir {
+    background-color: #008000;
+    color: #fff;
+    }
+
+    </style>
+<video id="video" style="display: none;"></video>
+<div class="canvas-ar"></div>
+<script src="script.js"></script>
 </body>
 </html>
