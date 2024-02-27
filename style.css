@@ -1,40 +1,56 @@
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 #permiso-camara {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#logo {
-    width: 100px;
-    margin-bottom: 20px;
+#permiso-camara.oculto {
+  display: none;
 }
 
-h1 {
-    font-size: 24px;
-    margin-bottom: 10px;
+#camara {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
 }
 
-p {
-    font-size: 16px;
-    margin-bottom: 20px;
+#video-camara {
+  width: 100%;
+  height: 100%;
 }
 
-#btn-permitir {
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #098d14;
-    color: #fff;
-    border: none;
-    cursor: pointer;
+#canvas-qr {
+  width: 100%;
+  height: 100%;
 }
 
-#video, #canvas-ar {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+#video-ra {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 11;
+  display: none;
+}
+
+#video-ra-elemento {
+  width: 100%;
+  height: 100%;
 }
