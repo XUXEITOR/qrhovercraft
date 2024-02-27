@@ -1,5 +1,6 @@
-const btnPermitir = document.getElementById('btn-permitir');
+onst btnPermitir = document.getElementById('btn-permitir');
 const video = document.getElementById('video');
+const canvasAR = document.getElementById('canvas-ar');
 
 btnPermitir.addEventListener('click', () => {
   navigator.mediaDevices.getUserMedia({ video: true })
@@ -11,7 +12,7 @@ btnPermitir.addEventListener('click', () => {
       document.getElementById('permiso-camara').style.display = 'none';
 
       // Inicia la detección de QR
-      iniciarDeteccionQR();
+      iniciarDeteccionQR(video);
     })
     .catch(error => {
       console.error('Error al obtener acceso a la cámara:', error);
@@ -26,20 +27,20 @@ let scanner;
 let scene, camera, renderer;
 
 // Función para iniciar la detección de QR
-function iniciarDeteccionQR() {
+function iniciarDeteccionQR(video) {
   scanner = new ZXing.BrowserQRCodeReader();
 
-  scanner.decodeFromImage(qrCode)
-    .then(result => {
+  scanner.decodeFromInputVideo(video, (result) => {
+    if (result) {
       // Se ha detectado el QR
       console.log('QR detectado:', result.text);
 
       // Iniciar la superposición del video
       iniciarVideoAR(result.text);
-    })
-    .catch(error => {
-      console.error('Error al detectar el QR:', error);
-    });
+    } else {
+      console.log('No se ha detectado ningún QR');
+    }
+  });
 }
 
 // Función para iniciar el video de realidad aumentada
