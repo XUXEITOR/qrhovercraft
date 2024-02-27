@@ -1,55 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COMCONAVRAEM</title> 
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realidad Aumentada con QR</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body><center><u>
-<h1>Presente Hovercraft</h1></u>
-<p>&nbsp;</p>
-<img src="https://github.com/XUXEITOR/qrhovercraft.github.io/blob/main/Sin%20t%C3%ADtulo.png?raw=true" alt="Logo" style="display: block; margin: 0 auto;"width="90" height="100">
-<p>&nbsp;</p>
-<p>Esta aplicación necesita acceder a tu cámara para funcionar correctamente, al termino se borrará el permiso otorgado, gracias.  </p>
-<p>&nbsp;</p> 
-<button id="btn-permitir">Permitir</button>
-<style>
-    #mensaje-permiso {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 20px;
-    width: 80%;
-    margin: 0 auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 100;
-    }
+<body>
+  <div id="permiso-camara">
+    <img src="ruta_del_logo/logo.png" alt="Logo" id="logo">
+    <h1>Permiso para usar la cámara</h1>
+    <p>Esta aplicación necesita acceder a tu cámara para funcionar correctamente.</p>
+    <button id="btn-permitir">Permitir</button>
+    <video id="video" autoplay style="display: none;"></video>
+    <canvas id="canvas-ar"></canvas>
+  </div>
 
-    h3 {
-    margin-top: 0;
-    }
-
-    p {
-    margin-bottom: 10px;
-    }
-    #btn-permitir {
-    margin: 10px 5px;
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: pointer;
-    }
-    #btn-permitir {
-    background-color: #008000;
-    color: #fff;
-    }
-
-    </style>
-<video id="video" style="display: none;"></video>
-<div class="canvas-ar"></div>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
