@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Realidad Aumentada</title>
-  <link rel="stylesheet" href="estilos.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realidad Aumentada</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/137/three.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="script.js"></script>
 </head>
 <body>
-  <div id="permiso-camara">
-    <img id="logo-camara" src="logo.png" alt="Logotipo de cámara">
-    <p>Para disfrutar de la experiencia completa, por favor, permite el acceso a tu cámara.</p>
-    <button id="btn-permiso-camara">Permitir acceso a la cámara</button>
-  </div>
-  <div id="camara">
-    <video id="video-camara" autoplay playsinline></video>
-    <canvas id="canvas-qr" style="display: none;"></canvas>
-  </div>
-  <div id="video-ra">
-    <video id="video-ra-elemento" controls></video>
-  </div>
+    <div id="main-container">
+        <div id="camera-container"></div>
+        <div id="video-container"></div>
+        <p id="message">Escanea la imagen para ver el video</p>
+    </div>
 </body>
-<script src="script.js"></script>
 </html>
