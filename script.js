@@ -1,3 +1,28 @@
+btnPermitir.addEventListener('click', () => {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      // Se ha obtenido acceso a la cámara
+      video.srcObject = stream;
+      video.style.display = 'block';
+
+      // Oculta la barra de navegación
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+      } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+      }
+
+      // Inicia la detección de QR
+      iniciarDeteccionQR();
+    })
+    .catch(error => {
+      // Error al obtener acceso a la cámara
+      console.error('Error al obtener acceso a la cámara:', error);
+    });
+});
+
 // Librerías
 const ZXing = require('@zxing/library');
 const THREE = require('three');
